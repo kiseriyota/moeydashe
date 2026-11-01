@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f0c29">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Для Ксюши</title>
+<style>
+  :root {
+    --bg1: #0f0c29;
+    --bg2: #302b63;
+    --bg3: #24243e;
+    --accent: #ff007f;
+    --accent-hover: #ff3399;
+    --text: #ffffff;
+    --text-muted: #a0a0b0;
+    --glass: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  
+  html { -webkit-text-size-adjust: 100%; }
+  
+  body {
+    margin: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: calc(16px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom));
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text);
+    background: linear-gradient(135deg, var(--bg1), var(--bg2), var(--bg3));
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    overscroll-behavior-y: contain;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  @keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .card {
+    width: 100%;
+    max-width: 440px;
+    background: var(--glass);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 32px;
+    padding: 32px 24px;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+    text-align: center;
+    overflow: hidden;
+    position: relative;
+    z-index: 2;
+  }
+
+  .screen { display: none; }
+  .screen.active { display: block; animation: fadeIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px) scale(0.98); }
+    to { opacity: 1; transform: none; }
+  }
+
+  h1 { font-size: clamp(1.6rem, 6vw, 2.2rem); line-height: 1.2; margin: 0 0 16px; font-weight: 700; letter-spacing: -0.5px; }
+  h2 { font-size: clamp(1.3rem, 5vw, 1.7rem); line-height: 1.3; margin: 0 0 16px; font-weight: 600; }
+  p { font-size: clamp(1rem, 4vw, 1.1rem); line-height: 1.6; margin: 0 0 16px; color: var(--text-muted); }
+  .sub { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px; opacity: 0.8; }
+  .big { font-size: clamp(1.4rem, 6vw, 1.8rem); font-weight: 700; margin: 10px 0 20px; color: var(--text); }
+
+  .dots { display: flex; gap: 6px; justify-content: center; margin-bottom: 24px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, 0.15); transition: all 0.3s; }
+  .dot.on { background: var(--accent); box-shadow: 0 0 10px var(--accent); transform: scale(1.2); }
+
+  .btn {
+    display: block;
+    width: 100%;
+    min-height: 56px;
+    border: 0;
+    border-radius: 16px;
+    padding: 16px 20px;
+    font: inherit;
+    font-size: 17px;
+    font-weight: 600;
+    color: #fff;
+    background: var(--accent);
+    box-shadow: 0 8px 24px rgba(255, 0, 127, 0.3);
+    cursor: pointer;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: all 0.2s ease;
+  }
+  .btn:hover { background: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 12px 28px rgba(255, 0, 127, 0.4); }
+  .btn:active { transform: scale(0.97); }
+  .btn[disabled] { opacity: 0.3; box-shadow: none; pointer-events: none; }
+
+  .btn.ghost {
+    width: 60%;
+    margin: 0 auto;
+    background: transparent;
+    color: var(--text-muted);
+    border: 2px solid var(--glass-border);
+    box-shadow: none;
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.3, 1.2), opacity 0.4s, border-color 0.2s;
+  }
+  .btn.ghost:hover { border-color: var(--text-muted); color: var(--text); background: rgba(255,255,255,0.05); }
+
+  .options { display: grid; gap: 12px; margin: 20px 0; }
+  .opt {
+    min-height: 56px;
+    padding: 14px 20px;
+    border-radius: 16px;
+    border: 1px solid var(--glass-border);
+    background: rgba(255, 255, 255, 0.03);
+    font: inherit;
+    font-size: 16px;
+    color: var(--text);
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: all 0.2s;
+  }
+  .opt:hover { background: rgba(255, 255, 255, 0.08); }
+  .opt:active { transform: scale(0.98); }
+  .opt.sel { border-color: var(--accent); background: rgba(255, 0, 127, 0.15); font-weight: 600; box-shadow: 0 0 15px rgba(255, 0, 127, 0.2); }
+
+  .colors { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin: 20px 0 24px; }
+  .sw {
+    width: 54px; height: 54px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.2);
+    padding: 0;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+  .sw:active { transform: scale(0.9); }
+  .sw.sel { outline: 3px solid var(--accent); outline-offset: 4px; border-color: transparent; transform: scale(1.1); }
+
+  input[type=text] {
+    width: 100%;
+    margin: 4px 0 20px;
+    padding: 16px 20px;
+    font-family: inherit;
+    font-size: 16px;
+    color: var(--text);
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: all 0.2s;
+  }
+  input[type=text]:focus { border-color: var(--accent); box-shadow: 0 0 15px rgba(255, 0, 127, 0.2); background: rgba(0, 0, 0, 0.4); }
+  input[type=text]::placeholder { color: rgba(255,255,255,0.3); }
+
+  .file-upload {
+    margin: 20px 0;
+    padding: 20px;
+    border: 2px dashed var(--glass-border);
+    border-radius: 16px;
+    background: rgba(0, 0, 0, 0.2);
+    transition: all 0.2s;
+  }
+  .file-upload:hover { border-color: var(--accent); background: rgba(255, 0, 127, 0.05); }
+  .file-upload input[type=file] { display: none; }
+  .file-upload label {
+    display: block;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .file-name { font-size: 14px; color: var(--text-muted); }
+
+  .answer { display: grid; gap: 14px; margin-top: 24px; }
+
+  .hint { display: none; margin: 20px 0 0; font-size: 15px; line-height: 1.5; color: var(--accent); font-weight: 600; }
+  .hint.show { display: block; animation: fadeIn 0.5s ease both; }
+
+  .fheart {
+    position: fixed;
+    bottom: -40px;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.9;
+    animation: floatUp linear forwards;
+    will-change: transform, opacity;
+    filter: drop-shadow(0 0 10px rgba(255, 0, 127, 0.6));
+  }
+  @keyframes floatUp {
+    to { transform: translateY(-115vh) rotate(30deg); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<main class="card">
+
+  <!-- 0. Приветствие -->
+  <section class="screen active" id="s0">
+    <h1>Привет, <span id="nameSlot"></span></h1>
+    <p>У меня к тебе несколько коротких вопросов.<br>Отвечай честно — это правда важно.</p>
+    <button class="btn" data-go="s1">Начать</button>
+  </section>
+
+  <!-- 1. Как дела -->
+  <section class="screen" id="s1">
+    <div class="dots" data-step="1"></div>
+    <h2>Как у тебя дела?</h2>
+    <div class="options" data-choice="mood">
+      <button class="opt" data-value="Отлично">Отлично</button>
+      <button class="opt" data-value="Хорошо">Хорошо</button>
+      <button class="opt" data-value="Так себе">Так себе</button>
+      <button class="opt" data-value="Устала">Устала</button>
+    </div>
+    <button class="btn" data-next="mood" data-go="s2" disabled>Дальше</button>
+  </section>
+
+  <!-- 2. Фильм -->
+  <section class="screen" id="s2">
+    <div class="dots" data-step="2"></div>
+    <h2>Какой у тебя любимый фильм?</h2>
+    <p class="sub">Тот, который можешь пересматривать сколько угодно</p>
+    <input type="text" data-text="movie" placeholder="Например, «Амели»" autocomplete="off" enterkeyhint="next">
+    <button class="btn" data-next="movie" data-go="s3">Дальше</button>
+  </section>
+
+  <!-- 3. Цвет -->
+  <section class="screen" id="s3">
+    <div class="dots" data-step="3"></div>
+    <h2>А любимый цвет?</h2>
+    <div class="colors" data-choice="color">
+      <button class="sw" data-value="Розовый"    data-color="#ff7aa8" aria-label="Розовый"></button>
+      <button class="sw" data-value="Красный"    data-color="#e63946" aria-label="Красный"></button>
+      <button class="sw" data-value="Оранжевый"  data-color="#ff9f43" aria-label="Оранжевый"></button>
+      <button class="sw" data-value="Жёлтый"     data-color="#ffd93d" aria-label="Жёлтый"></button>
+      <button class="sw" data-value="Зелёный"    data-color="#4cd137" aria-label="Зелёный"></button>
+      <button class="sw" data-value="Голубой"    data-color="#48dbfb" aria-label="Голубой"></button>
+      <button class="sw" data-value="Синий"      data-color="#4a69ff" aria-label="Синий"></button>
+      <button class="sw" data-value="Фиолетовый" data-color="#a55eea" aria-label="Фиолетовый"></button>
+      <button class="sw" data-value="Чёрный"     data-color="#2f3542" aria-label="Чёрный"></button>
+      <button class="sw" data-value="Белый"      data-color="#ffffff" aria-label="Белый"></button>
+    </div>
+    <button class="btn" data-next="color" data-go="s4" disabled>Дальше</button>
+  </section>
+
+  <!-- 4. Еда -->
+  <section class="screen" id="s4">
+    <div class="dots" data-step="4"></div>
+    <h2>Любимая еда?</h2>
+    <p class="sub">Чтобы я знал, чем тебя радовать</p>
+    <input type="text" data-text="food" placeholder="Например, паста с креветками" autocomplete="off" enterkeyhint="next">
+    <button class="btn" data-next="food" data-go="s5">Дальше</button>
+  </section>
+
+  <!-- 5. Напиток -->
+  <section class="screen" id="s5">
+    <div class="dots" data-step="5"></div>
+    <h2>А любимый напиток?</h2>
+    <p class="sub">Кофе, чай, или что-то покрепче?</p>
+    <input type="text" data-text="drink" placeholder="Например, капучино" autocomplete="off" enterkeyhint="next">
+    <button class="btn" data-next="drink" data-go="s6">Дальше</button>
+  </section>
+
+  <!-- 6. Вопрос про ножки + Фото -->
+  <section class="screen" id="s6">
+    <div class="dots" data-step="6"></div>
+    <h2>Подрочишь ножками мне?</h2>
+    
+    <div class="file-upload">
+      <label for="footPhoto">Прикрепить фото ножек</label>
+      <input type="file" id="footPhoto" accept="image/*">
+      <div class="file-name" id="footFileName">Файл не выбран</div>
+    </div>
+
+    <div class="answer">
+      <button class="btn" id="footYesBtn" disabled>Да, конечно</button>
+      <button class="btn ghost" id="footNoBtn">Нет</button>
+    </div>
+    <p class="hint" id="footHint">
+      Кнопка «нет» убежала.<br>
+      Я тебя заставлю, любимая моя.
+    </p>
+  </section>
+
+  <!-- 7. Вопрос про сисечки + Фото -->
+  <section class="screen" id="s7">
+    <div class="dots" data-step="7"></div>
+    <h2>Ты скинешь сисечки?</h2>
+    
+    <div class="file-upload">
+      <label for="boobsPhoto">Прикрепить фото</label>
+      <input type="file" id="boobsPhoto" accept="image/*">
+      <div class="file-name" id="boobsFileName">Файл не выбран</div>
+    </div>
+
+    <div class="answer">
+      <button class="btn" id="boobsYesBtn" disabled>Да</button>
+      <button class="btn ghost" id="boobsNoBtn">Нет</button>
+    </div>
+    <p class="hint" id="boobsHint">
+      Кнопка «нет» убежала.<br>
+      Я тебя заставлю, любимая моя.
+    </p>
+  </section>
+
+  <!-- 8. Главный вопрос -->
+  <section class="screen" id="s8">
+    <div class="dots" data-step="8"></div>
+    <h2>А теперь главный вопрос…</h2>
+    <p class="big">Ты любишь меня?</p>
+    <div class="answer">
+      <button class="btn" id="yesBtn">Да</button>
+      <button class="btn ghost" id="noBtn">Нет</button>
+    </div>
+    <p class="hint" id="noHint">
+      Кнопка «нет» убежала.<br>
+      Я тебя заставлю, любимая моя.
+    </p>
+  </section>
+
+  <!-- 9. Финал -->
+  <section class="screen" id="s9">
+    <h1>Я тоже тебя люблю</h1>
+    <p>Спасибо, что дошла до конца.<br>Теперь я знаю, что тебе нравится — и буду радовать тебя этим.</p>
+  </section>
+
+</main>
+
+<script>
+/* ====== НАСТРОЙКИ ====== */
+const CONFIG = {
+  herName: 'Ксюша',      // ← Её имя
+  tgToken: '9055331822:AAEq9Jgt2rgQbbzqpgBjjy0wSGN_ZsfS7no', // ← Твой токен
+  tgChatId: '5021596465' // ← Твой chat_id
+};
+/* ======================= */
+
+const answers = { mood:'', movie:'', color:'', food:'', drink:'', foot:'', boobs:'', love:'' };
+const LABELS = {
+  mood:'Как дела',
+  movie:'Любимый фильм',
+  color:'Любимый цвет',
+  food:'Любимая еда',
+  drink:'Любимый напиток',
+  foot:'Подрочишь ножками?',
+  boobs:'Скинешь сисечки?',
+  love:'«Ты любишь меня?»'
+};
+
+document.getElementById('nameSlot').textContent = CONFIG.herName;
+
+/* прогресс-точки */
+document.querySelectorAll('.dots').forEach(d => {
+  const total = 8, cur = +d.dataset.step;
+  d.innerHTML = Array.from({length: total},
+    (_, i) => `<span class="dot${i < cur ? ' on' : ''}"></span>`).join('');
+});
+
+/* навигация */
+function show(id){
+  document.querySelectorAll('.screen').forEach(s =>
+    s.classList.toggle('active', s.id === id));
+  window.scrollTo(0, 0);
+}
+
+/* отправка текста в Telegram */
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+async function sendAnswer(key, value){
+  if(!CONFIG.tgToken || !CONFIG.tgChatId) return;
+  const text = `💌 <b>${LABELS[key]}</b>\n${esc(value || '— (не ответила)')}`;
+  try{
+    await fetch(`https://api.telegram.org/bot${CONFIG.tgToken}/sendMessage`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ chat_id: CONFIG.tgChatId, text, parse_mode: 'HTML' })
+    });
+  }catch(e){ console.warn('Не удалось отправить', e); }
+}
+
+/* отправка фото в Telegram */
+async function sendPhoto(file, caption){
+  if(!CONFIG.tgToken || !CONFIG.tgChatId) return;
+  const formData = new FormData();
+  formData.append('chat_id', CONFIG.tgChatId);
+  formData.append('photo', file);
+  formData.append('caption', caption);
+  try{
+    await fetch(`https://api.telegram.org/bot${CONFIG.tgToken}/sendPhoto`, {
+      method: 'POST',
+      body: formData
+    });
+  }catch(e){ console.warn('Не удалось отправить фото', e); }
+}
+
+/* выбор варианта (кнопки и цвета) */
+document.querySelectorAll('[data-choice]').forEach(group => {
+  const key = group.dataset.choice;
+  group.querySelectorAll('[data-value]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      group.querySelectorAll('[data-value]').forEach(b => b.classList.remove('sel'));
+      btn.classList.add('sel');
+      answers[key] = btn.dataset.value;
+      const next = document.querySelector(`[data-next="${key}"]`);
+      if(next) next.disabled = false;
+    });
+  });
+});
+
+/* текстовые поля */
+document.querySelectorAll('[data-text]').forEach(inp => {
+  inp.addEventListener('input', () => {
+    answers[inp.dataset.text] = inp.value.trim();
+  });
+  inp.addEventListener('keydown', e => {
+    if(e.key === 'Enter'){
+      e.preventDefault();
+      inp.blur();
+      const btn = inp.parentElement.querySelector('[data-go]');
+      if(btn) btn.click();
+    }
+  });
+});
+
+/* кнопки «Дальше» */
+document.querySelectorAll('[data-go]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const key = btn.dataset.next;
+    if(key) sendAnswer(key, answers[key]);
+    show(btn.dataset.go);
+  });
+});
+
+/* --- Универсальная логика убегания кнопки "Нет" --- */
+function setupDodge(btnId, hintId) {
+  const btn = document.getElementById(btnId);
+  const hint = document.getElementById(hintId);
+  let tries = 0;
+
+  function dodge(e) {
+    if(e) e.preventDefault();
+    tries++;
+    const grid = btn.parentElement;
+    const maxX = Math.max(0, (grid.clientWidth - btn.offsetWidth) / 2 - 6);
+    const x = (Math.random() * 2 - 1) * maxX;
+    const rot = (Math.random() * 2 - 1) * 10;
+    const scale = Math.max(0.5, 1 - tries * 0.1);
+
+    btn.style.transform = `translateX(${x}px) rotate(${rot}deg) scale(${scale})`;
+
+    if(tries >= 3){
+      btn.style.opacity = '0';
+      btn.style.pointerEvents = 'none';
+      hint.classList.add('show');
+    }
+  }
+
+  btn.addEventListener('pointerdown', dodge);
+  btn.addEventListener('pointerenter', e => { if(e.pointerType === 'mouse') dodge(e); });
+}
+
+/* Подключаем убегание для всех трех вопросов */
+setupDodge('footNoBtn', 'footHint');
+setupDodge('boobsNoBtn', 'boobsHint');
+setupDodge('noBtn', 'noHint');
+
+/* --- Логика для фото ножек --- */
+document.getElementById('footPhoto').addEventListener('change', function(e) {
+  if (e.target.files.length > 0) {
+    document.getElementById('footFileName').textContent = 'Фото выбрано';
+    document.getElementById('footYesBtn').disabled = false;
+  }
+});
+
+document.getElementById('footYesBtn').addEventListener('click', async () => {
+  const file = document.getElementById('footPhoto').files[0];
+  if (file) {
+    document.getElementById('footYesBtn').textContent = 'Отправка...';
+    await sendPhoto(file, 'Фото ножек');
+    answers.foot = 'ДА + ФОТО';
+    show('s7');
+  }
+});
+
+/* --- Логика для фото сисечек --- */
+document.getElementById('boobsPhoto').addEventListener('change', function(e) {
+  if (e.target.files.length > 0) {
+    document.getElementById('boobsFileName').textContent = 'Фото выбрано';
+    document.getElementById('boobsYesBtn').disabled = false;
+  }
+});
+
+document.getElementById('boobsYesBtn').addEventListener('click', async () => {
+  const file = document.getElementById('boobsPhoto').files[0];
+  if (file) {
+    document.getElementById('boobsYesBtn').textContent = 'Отправка...';
+    await sendPhoto(file, 'Фото сисечек');
+    answers.boobs = 'ДА + ФОТО';
+    show('s8');
+  }
+});
+
+/* --- Главный вопрос --- */
+document.getElementById('yesBtn').addEventListener('click', () => {
+  answers.love = 'ДА';
+  sendAnswer('love', 'ДА');
+  show('s9');
+  burstHearts();
+});
+
+/* сердечки */
+function burstHearts(){
+  const emojis = ['❤', '♥', '♡'];
+  for(let i = 0; i < 30; i++){
+    setTimeout(() => {
+      const h = document.createElement('div');
+      h.className = 'fheart';
+      h.textContent = emojis[i % emojis.length];
+      h.style.left = (Math.random() * 100) + 'vw';
+      h.style.fontSize = (16 + Math.random() * 24) + 'px';
+      h.style.animationDuration = (3 + Math.random() * 3) + 's';
+      document.body.appendChild(h);
+      setTimeout(() => h.remove(), 8000);
+    }, i * 60);
+  }
+}
+
+/* подкрашиваем кружки цветов */
+document.querySelectorAll('.sw').forEach(sw => {
+  sw.style.background = sw.dataset.color;
+});
+</script>
+</body>
+</html>
